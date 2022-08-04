@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "description": "Inventor addin template",
+  "author": "Mensch und Maschine Schweiz",
+  "classifications": ["InventorAddin", "Inventor"],
+  "name": "Inventor addin",
+  "identity": "invAddin",
+  "shortName": "invAddin",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "sourceName": "InventorTemplate",
+  "preferNameDirectory": "true",
+  "guids": ["74F1F066-BB65-4141-BDC8-C4A7669913F1"],
+  "symbols": {
+    "SomeTestParam": {
+      "type": "parameter",
+      "datatype": "string",
+      "defaultValue": "John Smith",
+      "replaces": "Sayed Ibrahim Hashimi",
+      "description": "Some test parameter "
+    },
+    "SecondParam": {
+      "type": "parameter",
+      "datatype": "string",
+      "defaultValue": "Test",
+      "replaces": "Test2",
+      "description": "Some test parameter the second one "
+    }
+  }
+}
