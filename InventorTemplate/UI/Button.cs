@@ -21,18 +21,18 @@ namespace InventorTemplate.UI
             {
                 if (_bd != null)
                 {
-                    _bd.OnExecute -= bd_OnExecute;
+                    _bd.OnExecute -= ButtonOnExecute;
                 }
 
                 _bd = value;
                 if (_bd != null)
                 {
-                    _bd.OnExecute += bd_OnExecute;
+                    _bd.OnExecute += ButtonOnExecute;
                 }
             }
         }
 
-        private void bd_OnExecute(NameValueMap context)
+        private void ButtonOnExecute(NameValueMap context)
         {
             switch (Bd.InternalName)
             {

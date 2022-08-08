@@ -1,20 +1,30 @@
 ﻿using System;
 using System.Windows.Forms;
 using Inventor;
+using InventorTemplate.UI;
 
 namespace InventorTemplate.Helper
 {
-    public class ButtonDefinitionHelper
+    public class UiDefinitionHelper
     {
+	    public static ButtonDefinition CreateButton(string displayText, string internalName, string iconPath)
+	    {
+		    var myButton = new UiButton()
+		    {
+			    Bd = CreateButtonDefinition(displayText, internalName, "", iconPath)
+		    };
+		    return myButton.Bd;
+	    }
+
         public static ButtonDefinition CreateButtonDefinition(string displayName, string internalName,
             string toolTip = "", string iconFolder = "")
         {
             // Check to see if a command already exists is the specified internal name.
-            ButtonDefinitionHelper testDef = null;
+            UiDefinitionHelper testDef = null;
             try
             {
                 // ReSharper disable once SuspiciousTypeConversion.Global
-                testDef = (ButtonDefinitionHelper)Globals.InvApp.CommandManager.ControlDefinitions[internalName];
+                testDef = (UiDefinitionHelper)Globals.InvApp.CommandManager.ControlDefinitions[internalName];
             }
             catch
             {
@@ -109,6 +119,46 @@ namespace InventorTemplate.Helper
             {
                 return null;
             }
+        }
+        public static RibbonTab SetupTab(string displayName, string internalName, Ribbon invRibbon)
+        {
+	        RibbonTab ribbonTab = null;
+	        try
+	        {
+		        ribbonTab = invRibbon.RibbonTabs[internalName];
+	        }
+	        catch (Exception)
+	        {
+		        // ignored
+	        }
+
+	        if (ribbonTab == null)
+	        {
+		        ribbonTab = invRibbon.RibbonTabs.Add(displayName, internalName, Globals.AddInClientId);
+	        }
+
+	        var setupTabRet = ribbonTab;
+	        return setupTabRet;
+        }
+        public static RibbonPanel SetupPanel(string displayName, string internalName, RibbonTab ribbonTab)
+        {
+	        RibbonPanel ribbonPanel = null;
+	        try
+	        {
+		        ribbonPanel = ribbonTab.RibbonPanels[internalName];
+	        }
+	        catch (Exception)
+	        {
+		        // ignored
+	        }
+
+	        if (ribbonPanel == null)
+	        {
+		        ribbonPanel = ribbonTab.RibbonPanels.Add(displayName, internalName, Globals.AddInClientId);
+	        }
+
+	        var setupPanelRet = ribbonPanel;
+	        return setupPanelRet;
         }
     }
 
