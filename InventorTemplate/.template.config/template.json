@@ -1,7 +1,7 @@
 {
   "$schema": "http://json.schemastore.org/template",
   "description": "Inventor addin template",
-  "author": "Mensch und Maschine Schweiz",
+  "author": "Default Author",
   "classifications": ["InventorAddin", "Inventor"],
   "name": "Inventor addin",
   "identity": "invAddin",
@@ -11,22 +11,22 @@
     "type": "project"
   },
   "sourceName": "InventorTemplate",
-  "preferNameDirectory": "true",
+  "preferNameDirectory": true,
   "guids": ["74F1F066-BB65-4141-BDC8-C4A7669913F1"],
   "symbols": {
-    "SomeTestParam": {
+    "SolutionFolder": {
       "type": "parameter",
       "datatype": "string",
-      "defaultValue": "John Smith",
-      "replaces": "Sayed Ibrahim Hashimi",
-      "description": "Some test parameter "
+      "defaultValue": "C:\\MuM_Git\\MuM Schweiz\\inventorTemplate",
+      "replaces": "SolutionFolder",
+      "description": "This is used to replace some paths for the build script and the installer."
     },
-    "SecondParam": {
+    "InstallFolder": {
       "type": "parameter",
       "datatype": "string",
-      "defaultValue": "Test",
-      "replaces": "Test2",
-      "description": "Some test parameter the second one "
+      "defaultValue": "C:\\ProgramFiles\\InventorTemplate\\",
+      "replaces": "InstallFolder",
+      "description": "Defines where the visual studio build folder is located. This is used by the installer script."
     }
   }
 }
