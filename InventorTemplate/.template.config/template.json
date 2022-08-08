@@ -2,7 +2,7 @@
   "$schema": "http://json.schemastore.org/template",
   "description": "Inventor addin template",
   "author": "Default Author",
-  "classifications": ["InventorAddin", "Inventor"],
+  "classifications": [ "InventorAddin", "Inventor" ],
   "name": "Inventor addin",
   "identity": "invAddin",
   "shortName": "invAddin",
@@ -12,7 +12,20 @@
   },
   "sourceName": "InventorTemplate",
   "preferNameDirectory": true,
-  "guids": ["74F1F066-BB65-4141-BDC8-C4A7669913F1"],
+  "guids": [ "74F1F066-BB65-4141-BDC8-C4A7669913F1" ],
+  "sources": [
+    {
+      "modifiers": [
+        {
+          "exclude": [
+            ".vs/**",
+            "TemplateHelper/**",
+            "InventorTemplate.sln"
+          ]
+        }
+      ]
+    }
+  ],
   "symbols": {
     "SolutionFolder": {
       "type": "parameter",
