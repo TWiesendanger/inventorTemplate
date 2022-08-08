@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+  <assemblyIdentity name="InventorTemplate" version="1.0.0.0"></assemblyIdentity>
+  <clrClass clsid="{74F1F066-BB65-4141-BDC8-C4A7669913F1}" progid="InventorTemplate.StandardAddInServer" threadingModel="Both" name="InventorTemplate.StandardAddInServer" runtimeVersion=""></clrClass>
+  <file name="InventorTemplate.dll" hashalg="SHA1"></file>
+</assembly>

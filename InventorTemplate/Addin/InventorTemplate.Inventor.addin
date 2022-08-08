@@ -1,0 +1,13 @@
+<Addin Type="Standard">
+	<ClassId>{74F1F066-BB65-4141-BDC8-C4A7669913F1}</ClassId>
+  <ClientId>{74F1F066-BB65-4141-BDC8-C4A7669913F1}</ClientId>
+  <DisplayName>InventorTemplate</DisplayName>
+  <Description>Default description. Replace with description of addin.</Description>
+  <Assembly>InstallFolder\InventorTemplate.dll</Assembly>
+  <LoadOnStartUp>0</LoadOnStartUp>
+  <UserUnloadable>1</UserUnloadable>
+  <Hidden>0</Hidden>
+  <SupportedSoftwareVersionGreaterThan>24..</SupportedSoftwareVersionGreaterThan>
+  <DataVersion>1</DataVersion>
+  <UserInterfaceVersion>1</UserInterfaceVersion>
+</Addin>
