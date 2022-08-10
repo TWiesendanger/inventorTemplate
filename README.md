@@ -21,8 +21,6 @@
 
 ## Introduction
 
----
-
 If you ever copied multiple things from other addins over and over again, then you will like this template. The idea is to provide a template that already includes alot of standard features that every addin needs. If you want to there is nothing to change at all. You could use a generated addin from this template right out of the box. Things like guids are already generated. There is also a build script to automatically deploy it to a predefined folder.
 
 This template is based on the ***dotnet templating.*** See [here](https://docs.microsoft.com/en-us/dotnet/core/tools/custom-templates)
@@ -45,16 +43,12 @@ The following features are provided at the moment:
 
 ## Planned features
 
----
-
 - multi language support
 - nuget package
 
 Feel free to ask for other features by emailing me tobias.wiesendanger@gmail.com or by opening a issue.
 
 ## Version
-
----
 
 The template is setup for Inventor 2023 but can be used for other versions. 
 
