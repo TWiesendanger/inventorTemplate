@@ -1,6 +1,6 @@
-﻿namespace InventorTemplate.Helper.Logging
+﻿namespace InventorTemplate.Helper
 {
-    public class Logging
+    public class AppsettingsBinder
     {
 	    public string LogPath { get; set; }
     }
