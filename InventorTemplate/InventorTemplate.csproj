@@ -161,7 +161,7 @@
   <ItemGroup>
     <Compile Include="Globals.cs" />
     <Compile Include="UI\UiDefinitionHelper.cs" />
-    <Compile Include="Helper\Logging\Logging.cs" />
+    <Compile Include="Helper\AppsettingsBinder.cs" />
     <Compile Include="Helper\WindowWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StandardAddinServer.cs" />
@@ -196,22 +196,35 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include=".gitignore" />
     <Content Include="Installer\app.png" />
     <Content Include="Installer\InstallerScript.iss" />
     <Content Include="Installer\License.txt" />
     <Content Include="Ressources\versionhistory.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="UI\ButtonResources\DefaultButton\16x16.png">
+    <Content Include="UI\ButtonResources\DefaultButton\16x16DarkTheme.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="UI\ButtonResources\DefaultButton\32x32.png">
+    <Content Include="UI\ButtonResources\DefaultButton\16x16LightTheme.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="UI\ButtonResources\InfoIcon\16x16.png">
+    <Content Include="UI\ButtonResources\DefaultButton\32x32DarkTheme.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="UI\ButtonResources\InfoIcon\32x32.png">
+    <Content Include="UI\ButtonResources\DefaultButton\32x32LightTheme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\ButtonResources\Info\16x16DarkTheme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\ButtonResources\Info\16x16LightTheme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\ButtonResources\Info\32x32DarkTheme.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\ButtonResources\Info\32x32LightTheme.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
