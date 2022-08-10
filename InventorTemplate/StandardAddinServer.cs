@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Inventor;
 using InventorTemplate.Helper;
-using InventorTemplate.Helper.Logging;
+using InventorTemplate.UI;
 using Microsoft.Extensions.Configuration;
 using NLog;
 using NLog.Config;
@@ -21,6 +21,16 @@ namespace InventorTemplate
         List<Ribbon> _ribbons = new List<Ribbon>();
         List<RibbonPanel> _ribbonPanels = new List<RibbonPanel>();
         List<RibbonTab> _ribbonTabs = new List<RibbonTab>();
+        List<CommandControl> _buttons = new List<CommandControl>();
+        List<ButtonDefinition> _buttonDefinitions = new List<ButtonDefinition>();
+
+        private static ApplicationEvents _invAppEvents;
+        public static ApplicationEvents InvAppEvents
+        {
+            get => _invAppEvents;
+            set => _invAppEvents = value;
+        }
+
         ButtonDefinition _defaultButton;
         ButtonDefinition _info;
 
@@ -59,8 +69,15 @@ namespace InventorTemplate
             IConfiguration config = builder.Build();
 
             LogManager.ThrowConfigExceptions = true;
-            var logSettings = config.GetSection("Logging").Get<Logging>();
-            LogManager.Configuration = new XmlLoggingConfiguration(@"C:\temp\sampleAddin\Testaddin\nlog.config");
+            var logSettings = config.GetSection("Logging").Get<AppsettingsBinder>();
+            var basePath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            if (basePath != null)
+                LogManager.Configuration = new XmlLoggingConfiguration(System.IO.Path.Combine(basePath, "nlog.config"));
+            else
+            {
+                throw new ArgumentException(
+                    $"nlog.config not found! Make sure there is a nlog config definition.");
+            }
 
             LogManager.Configuration.Variables["logPath"] = logSettings.LogPath;
             var logger = LogManager.GetCurrentClassLogger();
@@ -69,10 +86,22 @@ namespace InventorTemplate
             {
                 logger.Debug("Addin InventorTemplate Activated");
 
-                UiEvents = Globals.InvApp.UserInterfaceManager.UserInterfaceEvents;
 
-                _info = UiDefinitionHelper.CreateButton("Info", "InventorTemplateInfo", @"UI\ButtonResources\InfoIcon");
-                _defaultButton = UiDefinitionHelper.CreateButton("DefaultButton", "InventorTemplateDefaultButton", @"UI\ButtonResources\DefaultButton");
+                Globals.InvApp = addInSiteObject.Application;
+                Globals.InvApplicationAddInSite = addInSiteObject;
+                UiEvents = Globals.InvApp.UserInterfaceManager.UserInterfaceEvents;
+                InvAppEvents = Globals.InvApp.ApplicationEvents;
+                InvAppEvents.OnApplicationOptionChange += InvAppEvents_OnApplicationOptionChange;
+
+                var themeManager = Globals.InvApp.ThemeManager;
+                var activeTheme = themeManager.ActiveTheme;
+                string theme = activeTheme.Name;
+                logger.Debug("Inventor ThemeManager ActiveTheme: " + theme);
+
+                _info = UiDefinitionHelper.CreateButton("Info", "info", @"UI\ButtonResources\Info", theme);
+                _defaultButton = UiDefinitionHelper.CreateButton("DefaultButton", "defaultButton", @"UI\ButtonResources\DefaultButton", theme);
+                _buttonDefinitions.Add(_info);
+                _buttonDefinitions.Add(_defaultButton);
 
                 if (firstTime)
                     AddToUserInterface();
@@ -85,30 +114,22 @@ namespace InventorTemplate
 
         public void Deactivate()
         {
-            _defaultButton = null;
-            _info = null;
-            //Globals.InvApp = null;
-            _uiEvents = null;
 
-            foreach (var ribbon in _ribbons)
+            try
             {
-                foreach (RibbonTab ribbonTab in ribbon.RibbonTabs)
+                _buttonDefinitions = new List<ButtonDefinition>();
+                _buttons = new List<CommandControl>();
+                _ribbons = new List<Ribbon>();
+                _uiEvents = null;
+
+                foreach (var commandControl in _buttons)
                 {
-                    if (ribbonTab.InternalName == "Testaddin")
-                    {
-                        foreach (RibbonPanel ribbonPanel in ribbonTab.RibbonPanels)
-                        {
-                            if (ribbonPanel.InternalName == "Info" || ribbonPanel.InternalName == "AddinCommands")
-                            {
-                                foreach (CommandControl commandControl in ribbonPanel.CommandControls)
-                                {
-                                    if (commandControl.InternalName.Contains("TestAddin"))
-                                        commandControl.Delete();
-                                }
-                            }
-                        }
-                    }
+                    commandControl.Delete();
                 }
+            }
+            catch
+            {
+                // ignored
             }
 
             if (_ribbonPanels != null)
@@ -119,9 +140,10 @@ namespace InventorTemplate
                     Marshal.ReleaseComObject(_ribbonPanels[i]);
                     _ribbonPanels[i] = null;
                 }
+
             }
 
-            _ribbonPanels = null;
+            _ribbonPanels = new List<RibbonPanel>();
 
             if (_ribbonTabs != null)
             {
@@ -131,11 +153,20 @@ namespace InventorTemplate
                     Marshal.ReleaseComObject(_ribbonTabs[i]);
                     _ribbonTabs[i] = null;
                 }
+
             }
 
-            _ribbonTabs = null;
+            _ribbonTabs = new List<RibbonTab>();
 
-            //Marshal.ReleaseComObject(Globals.InvApp);
+            try
+            {
+                InvAppEvents.OnApplicationOptionChange -= InvAppEvents_OnApplicationOptionChange;
+            }
+            catch
+            {
+                // ignored
+            }
+
             GC.Collect();
             GC.WaitForPendingFinalizers();
         }
@@ -172,30 +203,61 @@ namespace InventorTemplate
             _ribbonPanels.Add(infoIam);
             _ribbonPanels.Add(infoIpn);
 
-            var buttonsIdw = UiDefinitionHelper.SetupPanel("AddinCommands", "AddinCommands", tabIdw);
-            var buttonsIpt = UiDefinitionHelper.SetupPanel("AddinCommands", "AddinCommands", tabIpt);
-            var buttonsIam = UiDefinitionHelper.SetupPanel("AddinCommands", "AddinCommands", tabIam);
-            var buttonsIpn = UiDefinitionHelper.SetupPanel("AddinCommands", "AddinCommands", tabIpn);
+            var addinPanelIdw = UiDefinitionHelper.SetupPanel("AddinCommands", "AddinCommands", tabIdw);
+            var addinPanelIpt = UiDefinitionHelper.SetupPanel("AddinCommands", "AddinCommands", tabIpt);
+            var addinPanelIam = UiDefinitionHelper.SetupPanel("AddinCommands", "AddinCommands", tabIam);
+            var addinPanelIpn = UiDefinitionHelper.SetupPanel("AddinCommands", "AddinCommands", tabIpn);
+            _ribbonPanels.Add(addinPanelIdw);
+            _ribbonPanels.Add(addinPanelIpt);
+            _ribbonPanels.Add(addinPanelIam);
+            _ribbonPanels.Add(addinPanelIpn);
 
             if (_defaultButton != null)
             {
-                buttonsIdw.CommandControls.AddButton(_defaultButton, true);
-                buttonsIpt.CommandControls.AddButton(_defaultButton, true);
-                buttonsIam.CommandControls.AddButton(_defaultButton, true);
-                buttonsIpn.CommandControls.AddButton(_defaultButton, true);
+                var defaultButtonIdw = addinPanelIdw.CommandControls.AddButton(_defaultButton, true);
+                var defaultButtonIpt = addinPanelIpt.CommandControls.AddButton(_defaultButton, true);
+                var defaultButtonIam = addinPanelIam.CommandControls.AddButton(_defaultButton, true);
+                var defaultButtonIpn = addinPanelIpn.CommandControls.AddButton(_defaultButton, true);
+                _buttons.Add(defaultButtonIdw);
+                _buttons.Add(defaultButtonIpt);
+                _buttons.Add(defaultButtonIam);
+                _buttons.Add(defaultButtonIpn);
             }
             if (_info != null)
             {
-                infoIdw.CommandControls.AddButton(_info, true);
-                infoIpt.CommandControls.AddButton(_info, true);
-                infoIam.CommandControls.AddButton(_info, true);
-                infoIpn.CommandControls.AddButton(_info, true);
+                var infoButtonIdw = infoIdw.CommandControls.AddButton(_info, true);
+                var infoButtonIpt = infoIpt.CommandControls.AddButton(_info, true);
+                var infoButtonIam = infoIam.CommandControls.AddButton(_info, true);
+                var infoButtonIpn = infoIpn.CommandControls.AddButton(_info, true);
+                _buttons.Add(infoButtonIdw);
+                _buttons.Add(infoButtonIpt);
+                _buttons.Add(infoButtonIam);
+                _buttons.Add(infoButtonIpn);
             }
         }
 
         private void UiEventsOnResetRibbonInterface(NameValueMap context)
         {
 	        AddToUserInterface();
+        }
+
+        private void InvAppEvents_OnApplicationOptionChange(EventTimingEnum BeforeOrAfter, NameValueMap Context, out HandlingCodeEnum HandlingCode)
+        {
+            if (BeforeOrAfter == EventTimingEnum.kAfter)
+            {
+                var themeManager = Globals.InvApp.ThemeManager;
+                var activeTheme = themeManager.ActiveTheme;
+                string theme = activeTheme.Name;
+
+                // TODO create check if theme even changed
+                // maybe create global theme variable
+
+                //UiDefinitionHelper.SetButtonTheme(_buttonDefinitions, theme);
+                Deactivate();
+                Activate(Globals.InvApplicationAddInSite, true);
+            }
+
+            HandlingCode = HandlingCodeEnum.kEventNotHandled;
         }
     }
 }
