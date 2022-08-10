@@ -32,14 +32,16 @@
       "datatype": "string",
       "defaultValue": "C:\\MuM_Git\\MuM Schweiz\\inventorTemplate",
       "replaces": "SolutionFolder",
-      "description": "This is used to replace some paths for the build script and the installer."
+      "description": "This is used to replace some paths for the build script and the installer.",
+      "isRequired": true
     },
     "InstallFolder": {
       "type": "parameter",
       "datatype": "string",
       "defaultValue": "C:\\ProgramFiles\\InventorTemplate\\",
       "replaces": "InstallFolder",
-      "description": "Defines where the visual studio build folder is located. This is used by the installer script."
+      "description": "Defines where the visual studio build folder is located. This is used by the installer script.",
+      "isRequired": true
     }
   }
 }
