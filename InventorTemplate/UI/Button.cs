@@ -36,10 +36,10 @@ namespace InventorTemplate.UI
         {
             switch (Bd.InternalName)
             {
-                case "InventorTemplateDefaultButton":
+                case "defaultButton":
                     MessageBox.Show(@"Default message.", @"Default title");
                     return;
-                case "InventorTemplateInfo":
+                case "info":
                     var infoDlg = new FrmInfo();
                     infoDlg.ShowDialog(new WindowWrapper((IntPtr)Globals.InvApp.MainFrameHWND));
                     return;

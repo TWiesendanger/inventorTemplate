@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Windows.Forms;
 using Inventor;
-using InventorTemplate.UI;
+using IPictureDisp = stdole.IPictureDisp;
 
-namespace InventorTemplate.Helper
+namespace InventorTemplate.UI
 {
     public class UiDefinitionHelper
     {
-	    public static ButtonDefinition CreateButton(string displayText, string internalName, string iconPath)
-	    {
-		    var myButton = new UiButton()
-		    {
-			    Bd = CreateButtonDefinition(displayText, internalName, "", iconPath)
-		    };
-		    return myButton.Bd;
-	    }
+        public static ButtonDefinition CreateButton(string displayText, string internalName, string iconPath, string theme)
+        {
+            var myButton = new UiButton()
+            {
+                Bd = CreateButtonDefinition(displayText, internalName, "", iconPath, theme)
+            };
+            return myButton.Bd;
+        }
 
         public static ButtonDefinition CreateButtonDefinition(string displayName, string internalName,
-            string toolTip = "", string iconFolder = "")
+            string toolTip, string iconFolder, string theme)
         {
             // Check to see if a command already exists is the specified internal name.
             UiDefinitionHelper testDef = null;
@@ -39,6 +39,27 @@ namespace InventorTemplate.Helper
                 return null;
             }
 
+            iconFolder = GetIconFolder(iconFolder);
+            var (iPicDisp16X16, iPicDisp32X32) = GetButtonIcons(iconFolder, theme);
+
+            try
+            {
+                // Get the ControlDefinitions collection.
+                ControlDefinitions controlDefs = Globals.InvApp.CommandManager.ControlDefinitions;
+
+                // Create the command definition.
+                ButtonDefinition btnDef = controlDefs.AddButtonDefinition(displayName, internalName,
+                    CommandTypesEnum.kShapeEditCmdType, Globals.AddInClientId, "", toolTip, iPicDisp16X16,
+                    iPicDisp32X32);
+                return btnDef;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+        public static string GetIconFolder(string iconFolder)
+        {
             // Check to see if the provided folder is a full or relative path.
             if (!string.IsNullOrEmpty(iconFolder))
             {
@@ -54,15 +75,18 @@ namespace InventorTemplate.Helper
                 }
             }
 
-            // Get the images from the specified icon folder.
-            stdole.IPictureDisp iPicDisp16X16 = null;
-            stdole.IPictureDisp iPicDisp32X32 = null;
+            return iconFolder;
+        }
+        public static (IPictureDisp iPicDisp16X16, IPictureDisp iPicDisp32X32) GetButtonIcons(string iconFolder, string theme)
+        {
+            IPictureDisp iPicDisp16X16 = null;
+            IPictureDisp iPicDisp32X32 = null;
             if (!string.IsNullOrEmpty(iconFolder))
             {
                 if (System.IO.Directory.Exists(iconFolder))
                 {
-                    string filename16X16 = System.IO.Path.Combine(iconFolder, "16x16.png");
-                    string filename32X32 = System.IO.Path.Combine(iconFolder, "32x32.png");
+                    string filename16X16 = System.IO.Path.Combine(iconFolder, $"16x16{theme}.png");
+                    string filename32X32 = System.IO.Path.Combine(iconFolder, $"32x32{theme}.png");
 
                     if (System.IO.File.Exists(filename16X16))
                     {
@@ -104,21 +128,7 @@ namespace InventorTemplate.Helper
                 }
             }
 
-            try
-            {
-                // Get the ControlDefinitions collection.
-                ControlDefinitions controlDefs = Globals.InvApp.CommandManager.ControlDefinitions;
-
-                // Create the command definition.
-                ButtonDefinition btnDef = controlDefs.AddButtonDefinition(displayName, internalName,
-                    CommandTypesEnum.kShapeEditCmdType, Globals.AddInClientId, "", toolTip, iPicDisp16X16,
-                    iPicDisp32X32);
-                return btnDef;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            return (iPicDisp16X16, iPicDisp32X32);
         }
         public static RibbonTab SetupTab(string displayName, string internalName, Ribbon invRibbon)
         {
