@@ -1,10 +1,6 @@
 {
   "$schema": "http://json.schemastore.org/dotnetcli.host",
   "symbolInfo": {
-    "SolutionFolder": {
-      "longName": "solutionFolder",
-      "shortName": "solFld"
-    },
     "InstallFolder": {
       "longName": "installFolder",
       "shortName": "instFld"

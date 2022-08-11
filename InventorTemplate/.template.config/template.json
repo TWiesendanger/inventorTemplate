@@ -19,7 +19,6 @@
         {
           "exclude": [
             ".vs/**",
-            "TemplateHelper/**",
             "InventorTemplate.sln"
           ]
         }
@@ -27,14 +26,6 @@
     }
   ],
   "symbols": {
-    "SolutionFolder": {
-      "type": "parameter",
-      "datatype": "string",
-      "defaultValue": "C:\\MuM_Git\\MuM Schweiz\\inventorTemplate",
-      "replaces": "SolutionFolder",
-      "description": "This is used to replace some paths for the build script and the installer.",
-      "isRequired": true
-    },
     "InstallFolder": {
       "type": "parameter",
       "datatype": "string",
