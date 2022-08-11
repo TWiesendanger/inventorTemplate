@@ -119,13 +119,20 @@ namespace InventorTemplate
             ReleaseRibbonTabs();
             ReleaseAppEvents();
 
-            _ribbons = new List<Ribbon>();
-            _uiEvents = null;
-            Marshal.ReleaseComObject(Globals.InvApp);
-            Globals.InvApp = null;
+            try
+            {
+                _ribbons = new List<Ribbon>();
+                _uiEvents = null;
+                Marshal.ReleaseComObject(Globals.InvApp);
+                Globals.InvApp = null;
 
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }
+            catch
+            {
+                // ignored
+            }
         }
         private void ReleaseAppEvents()
         {
