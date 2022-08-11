@@ -94,12 +94,12 @@ namespace InventorTemplate
                 InvAppEvents.OnApplicationOptionChange += InvAppEvents_OnApplicationOptionChange;
 
                 var themeManager = Globals.InvApp.ThemeManager;
-                var activeTheme = themeManager.ActiveTheme;
-                string theme = activeTheme.Name;
+                Globals.ActiveTheme = themeManager.ActiveTheme;
+                string theme = Globals.ActiveTheme.Name;
                 logger.Debug("Inventor ThemeManager ActiveTheme: " + theme);
 
-                _info = UiDefinitionHelper.CreateButton("Info", "info", @"UI\ButtonResources\Info", theme);
-                _defaultButton = UiDefinitionHelper.CreateButton("DefaultButton", "defaultButton", @"UI\ButtonResources\DefaultButton", theme);
+                _info = UiDefinitionHelper.CreateButton("Info", "InventorTemplateInfo", @"UI\ButtonResources\Info", theme);
+                _defaultButton = UiDefinitionHelper.CreateButton("DefaultButton", "InventorTemplateDefaultButton", @"UI\ButtonResources\DefaultButton", theme);
                 _buttonDefinitions.Add(_info);
                 _buttonDefinitions.Add(_defaultButton);
 
@@ -114,50 +114,21 @@ namespace InventorTemplate
 
         public void Deactivate()
         {
+            ReleaseButtons();
+            ReleaseRibbonPanels();
+            ReleaseRibbonTabs();
+            ReleaseAppEvents();
 
-            try
-            {
-                _buttonDefinitions = new List<ButtonDefinition>();
-                _buttons = new List<CommandControl>();
-                _ribbons = new List<Ribbon>();
-                _uiEvents = null;
+            _ribbons = new List<Ribbon>();
+            _uiEvents = null;
+            Marshal.ReleaseComObject(Globals.InvApp);
+            Globals.InvApp = null;
 
-                foreach (var commandControl in _buttons)
-                {
-                    commandControl.Delete();
-                }
-            }
-            catch
-            {
-                // ignored
-            }
-
-            if (_ribbonPanels != null)
-            {
-                for (int i = 0; i < _ribbonPanels.Count; i++)
-                {
-                    _ribbonPanels[i].Delete();
-                    Marshal.ReleaseComObject(_ribbonPanels[i]);
-                    _ribbonPanels[i] = null;
-                }
-
-            }
-
-            _ribbonPanels = new List<RibbonPanel>();
-
-            if (_ribbonTabs != null)
-            {
-                for (int i = 0; i < _ribbonTabs.Count; i++)
-                {
-                    _ribbonTabs[i].Delete();
-                    Marshal.ReleaseComObject(_ribbonTabs[i]);
-                    _ribbonTabs[i] = null;
-                }
-
-            }
-
-            _ribbonTabs = new List<RibbonTab>();
-
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+        }
+        private void ReleaseAppEvents()
+        {
             try
             {
                 InvAppEvents.OnApplicationOptionChange -= InvAppEvents_OnApplicationOptionChange;
@@ -166,9 +137,58 @@ namespace InventorTemplate
             {
                 // ignored
             }
+        }
+        private void ReleaseRibbonTabs()
+        {
+            if (_ribbonTabs != null)
+            {
+                for (int i = 0; i < _ribbonTabs.Count; i++)
+                {
+                    _ribbonTabs[i].Delete();
+                    Marshal.ReleaseComObject(_ribbonTabs[i]);
+                    _ribbonTabs[i] = null;
+                }
+            }
 
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
+            _ribbonTabs = new List<RibbonTab>();
+        }
+        private void ReleaseRibbonPanels()
+        {
+            if (_ribbonPanels != null)
+            {
+                for (int i = 0; i < _ribbonPanels.Count; i++)
+                {
+                    _ribbonPanels[i].Delete();
+                    Marshal.ReleaseComObject(_ribbonPanels[i]);
+                    _ribbonPanels[i] = null;
+                }
+            }
+
+            _ribbonPanels = new List<RibbonPanel>();
+        }
+        private void ReleaseButtons()
+        {
+            try
+            {
+                foreach (var buttonDefinition in _buttonDefinitions)
+                {
+                    buttonDefinition.Delete();
+                    Marshal.ReleaseComObject(buttonDefinition);
+                }
+
+                foreach (var commandControl in _buttons)
+                {
+                    commandControl.Delete();
+                    Marshal.ReleaseComObject(commandControl);
+                }
+            }
+            catch
+            {
+                // ignored
+            }
+
+            _buttonDefinitions = new List<ButtonDefinition>();
+            _buttons = new List<CommandControl>();
         }
 
         public object Automation => null;
@@ -185,10 +205,10 @@ namespace InventorTemplate
             _ribbons.Add(iamRibbon);
             _ribbons.Add(ipnRibbon);
 
-            var tabIdw = UiDefinitionHelper.SetupTab("Testaddin", "Testaddin", idwRibbon);
-            var tabIpt = UiDefinitionHelper.SetupTab("Testaddin", "Testaddin", iptRibbon);
-            var tabIam = UiDefinitionHelper.SetupTab("Testaddin", "Testaddin", iamRibbon);
-            var tabIpn = UiDefinitionHelper.SetupTab("Testaddin", "Testaddin", ipnRibbon);
+            var tabIdw = UiDefinitionHelper.SetupTab("InventorTemplate", "InventorTemplate", idwRibbon);
+            var tabIpt = UiDefinitionHelper.SetupTab("InventorTemplate", "InventorTemplate", iptRibbon);
+            var tabIam = UiDefinitionHelper.SetupTab("InventorTemplate", "InventorTemplate", iamRibbon);
+            var tabIpn = UiDefinitionHelper.SetupTab("InventorTemplate", "InventorTemplate", ipnRibbon);
             _ribbonTabs.Add(tabIdw);
             _ribbonTabs.Add(tabIpt);
             _ribbonTabs.Add(tabIam);
@@ -241,23 +261,22 @@ namespace InventorTemplate
 	        AddToUserInterface();
         }
 
-        private void InvAppEvents_OnApplicationOptionChange(EventTimingEnum BeforeOrAfter, NameValueMap Context, out HandlingCodeEnum HandlingCode)
+        private void InvAppEvents_OnApplicationOptionChange(EventTimingEnum beforeOrAfter, NameValueMap context, out HandlingCodeEnum handlingCode)
         {
-            if (BeforeOrAfter == EventTimingEnum.kAfter)
+            if (beforeOrAfter == EventTimingEnum.kAfter)
             {
                 var themeManager = Globals.InvApp.ThemeManager;
                 var activeTheme = themeManager.ActiveTheme;
                 string theme = activeTheme.Name;
 
-                // TODO create check if theme even changed
-                // maybe create global theme variable
-
-                //UiDefinitionHelper.SetButtonTheme(_buttonDefinitions, theme);
-                Deactivate();
-                Activate(Globals.InvApplicationAddInSite, true);
+                if (Globals.ActiveTheme.Name != theme) //check if theme has changed
+                {
+                    Deactivate();
+                    Activate(Globals.InvApplicationAddInSite, true);
+                }
             }
 
-            HandlingCode = HandlingCodeEnum.kEventNotHandled;
+            handlingCode = HandlingCodeEnum.kEventNotHandled;
         }
     }
 }
