@@ -20,11 +20,11 @@ namespace InventorTemplate.UI
             string toolTip, string iconFolder, string theme)
         {
             // Check to see if a command already exists is the specified internal name.
-            UiDefinitionHelper testDef = null;
+            ButtonDefinition testDef = null;
             try
             {
                 // ReSharper disable once SuspiciousTypeConversion.Global
-                testDef = (UiDefinitionHelper)Globals.InvApp.CommandManager.ControlDefinitions[internalName];
+                testDef = (ButtonDefinition)Globals.InvApp.CommandManager.ControlDefinitions[internalName];
             }
             catch
             {
@@ -185,11 +185,11 @@ namespace InventorTemplate.UI
         {
         }
 
-        public static stdole.IPictureDisp ConvertImageToIPictureDisp(System.Drawing.Image image)
+        public static IPictureDisp ConvertImageToIPictureDisp(System.Drawing.Image image)
         {
             try
             {
-                return (stdole.IPictureDisp)GetIPictureFromPicture(image);
+                return (IPictureDisp)GetIPictureFromPicture(image);
             }
             catch (Exception)
             {
