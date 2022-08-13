@@ -5,6 +5,7 @@
 - [Inventor Template in C#](#inventor-template-in-c)
   - [Introduction](#introduction)
   - [Planned features](#planned-features)
+  - [Demo](#demo)
   - [Version](#version)
     - [Version higher than 2023](#version-higher-than-2023)
     - [Version lower than 2023](#version-lower-than-2023)
@@ -52,6 +53,10 @@ The following features are provided at the moment:
 - nuget package
 
 Feel free to ask for other features by emailing me tobias.wiesendanger@gmail.com or by opening a issue.
+
+## Demo
+
+![QuickStart](https://user-images.githubusercontent.com/20424937/184498033-71304b71-a91a-4568-893b-110edb9b116d.gif)
 
 ## Version
 
