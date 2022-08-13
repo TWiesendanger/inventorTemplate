@@ -250,7 +250,7 @@ echo use manifest to sign dll
 echo Deleting the existing add-in folder.
 echo rmdir /q /s "C:\ProgramData\Autodesk\Inventor Addins\InventorTemplate.Inventor.addin" 
 
-echo - Copy the .addin file and the ButtonResources folder into the result folder.
+echo - Copy the .addin file folder into the standard Inventor Addins folder.
 XCopy "%25PATHTORUNIN%25Addin\InventorTemplate.Inventor.addin" "C:\ProgramData\Autodesk\Inventor Addins" /y
 
 echo Copy everything belonging to the addin file into the install folder
