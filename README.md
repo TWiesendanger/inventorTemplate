@@ -25,7 +25,8 @@
 - [Troubleshooting](#troubleshooting)
   - [dotnet new not available in terminal](#dotnet-new-not-available-in-terminal)
   - [mt.exe missing](#mtexe-missing)
-- [There was an error opening the file.](#there-was-an-error-opening-the-file)
+  - [There was an error opening the file.](#there-was-an-error-opening-the-file)
+  - [All my references are missing](#all-my-references-are-missing)
 
 ## Introduction
 
@@ -309,7 +310,7 @@ It's sufficient to install `SDK for Desktop C++ x86 Apps`. After this look here:
 
 There is now an `mt.exe` inside of the ressource folder that gets referenced by the build script. So this should no longer be a problem.
 
-# There was an error opening the file.
+## There was an error opening the file.
 
 If your addin for some reason doesn't load, check what the Add-Ins Dialog shows.
 
@@ -323,3 +324,10 @@ So this will not work:
 but this is fine:
 
 ![image](https://user-images.githubusercontent.com/20424937/184719423-39b14420-eca1-409b-9305-bda6ab16b123.png)
+
+## All my references are missing
+
+Try dotnet restore inside of the developer console to download any referenced nuget packages.
+For all the other references, there are different things that can lead to this:
+
+TODO
