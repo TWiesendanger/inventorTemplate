@@ -25,6 +25,7 @@
 - [Troubleshooting](#troubleshooting)
   - [dotnet new not available in terminal](#dotnet-new-not-available-in-terminal)
   - [mt.exe missing](#mtexe-missing)
+- [There was an error opening the file.](#there-was-an-error-opening-the-file)
 
 ## Introduction
 
@@ -112,7 +113,7 @@ To see what options are available you can always use this:
 
 ![image](https://user-images.githubusercontent.com/20424937/184482872-a1bfd68f-bb32-4673-85f4-81af6b8ee955.png)
 
-As you can see there is currently one options that needs to be provided.
+As you can see there is currently one option that needs to be provided.
 
 This could look like this:
 `dotnet new invAddin -n sampleAddin -o "C:\temp\sampleAddin\"  -instFld "C:\ProgramData\Company\sampleAddin"`
@@ -303,5 +304,22 @@ To use this you need to install the .NET SDK 3.1 or higher. Download it [here](h
 
 ## mt.exe missing
 
-If you dont have a mt.exe, then download the [Windows Dev Kit](https://developer.microsoft.com/de-de/windows/downloads/windows-10-sdk/).
-It's sufficient to install `SDK for Desktop C++ x86 Apps`. After this look here: `C:\Program Files (x86)\Windows Kits\10\bin\<version>\<platform>`.
+~~If you dont have a mt.exe, then download the [Windows Dev Kit](https://developer.microsoft.com/de-de/windows/downloads/windows-10-sdk/).
+It's sufficient to install `SDK for Desktop C++ x86 Apps`. After this look here: `C:\Program Files (x86)\Windows Kits\10\bin\<version>\<platform>`.~~
+
+There is now an `mt.exe` inside of the ressource folder that gets referenced by the build script. So this should no longer be a problem.
+
+# There was an error opening the file.
+
+If your addin for some reason doesn't load, check what the Add-Ins Dialog shows.
+
+![image](https://user-images.githubusercontent.com/20424937/184718727-d089899e-7517-428a-92e3-d5d2d972936d.png)
+
+If there was an error opening the file is shown. Make sure that it points to the right dll file. It's not enough to just give the path.
+So this will not work:
+
+![image](https://user-images.githubusercontent.com/20424937/184719392-fac1d54d-90f1-4e83-abd2-820ba044cc01.png)
+
+but this is fine:
+
+![image](https://user-images.githubusercontent.com/20424937/184719423-39b14420-eca1-409b-9305-bda6ab16b123.png)
