@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -10,6 +12,7 @@ using InventorTemplate.UI;
 using Microsoft.Extensions.Configuration;
 using NLog;
 using NLog.Config;
+using Path = System.IO.Path;
 
 namespace InventorTemplate
 {
@@ -35,25 +38,25 @@ namespace InventorTemplate
         ButtonDefinition _info;
 
         public UserInterfaceEvents UiEvents
-	    {
-		    [MethodImpl(MethodImplOptions.Synchronized)]
-		    get => _uiEvents;
+        {
+            [MethodImpl(MethodImplOptions.Synchronized)]
+            get => _uiEvents;
 
-		    [MethodImpl(MethodImplOptions.Synchronized)]
-		    set
-		    {
-			    if (_uiEvents != null)
-			    {
-				    _uiEvents.OnResetRibbonInterface -= UiEventsOnResetRibbonInterface;
-			    }
+            [MethodImpl(MethodImplOptions.Synchronized)]
+            set
+            {
+                if (_uiEvents != null)
+                {
+                    _uiEvents.OnResetRibbonInterface -= UiEventsOnResetRibbonInterface;
+                }
 
-			    _uiEvents = value;
-			    if (_uiEvents != null)
-			    {
-				    _uiEvents.OnResetRibbonInterface += UiEventsOnResetRibbonInterface;
-			    }
-		    }
-	    }
+                _uiEvents = value;
+                if (_uiEvents != null)
+                {
+                    _uiEvents.OnResetRibbonInterface += UiEventsOnResetRibbonInterface;
+                }
+            }
+        }
 
         /// <summary>
         /// This method is called by Inventor when it loads the AddIn. The AddInSiteObject provides access to the Inventor Application object. The FirstTime flag indicates if the AddIn is loaded for the first time. However, with the introduction of the ribbon this argument is always true.
@@ -62,6 +65,9 @@ namespace InventorTemplate
         /// <param name="firstTime">if set to <c>true</c> [first time].</param>
         public void Activate(ApplicationAddInSite addInSiteObject, bool firstTime)
         {
+	        AppDomain.CurrentDomain.AssemblyResolve +=
+		        CurrentDomain_AssemblyResolve;
+
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false);
@@ -70,9 +76,9 @@ namespace InventorTemplate
 
             LogManager.ThrowConfigExceptions = true;
             var logSettings = config.GetSection("Logging").Get<AppsettingsBinder>();
-            var basePath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            var basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             if (basePath != null)
-                LogManager.Configuration = new XmlLoggingConfiguration(System.IO.Path.Combine(basePath, "nlog.config"));
+                LogManager.Configuration = new XmlLoggingConfiguration(Path.Combine(basePath, "nlog.config"));
             else
             {
                 throw new ArgumentException(
@@ -265,7 +271,7 @@ namespace InventorTemplate
 
         private void UiEventsOnResetRibbonInterface(NameValueMap context)
         {
-	        AddToUserInterface();
+            AddToUserInterface();
         }
 
         private void InvAppEvents_OnApplicationOptionChange(EventTimingEnum beforeOrAfter, NameValueMap context, out HandlingCodeEnum handlingCode)
@@ -284,6 +290,31 @@ namespace InventorTemplate
             }
 
             handlingCode = HandlingCodeEnum.kEventNotHandled;
+        }
+
+        private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            // Ignore missing resources
+            if (args.Name.Contains(".resources"))
+                return null;
+
+            // check for assemblies already loaded
+            Assembly assembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.FullName == args.Name);
+            if (assembly != null)
+                return assembly;
+            string filename = args.Name.Split(',')[0] + ".dll".ToLower();
+            string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+            UriBuilder uri = new UriBuilder(codeBase);
+            string path = Uri.UnescapeDataString(uri.Path);
+            string assemblyPath = Path.GetDirectoryName(path);
+            if (assemblyPath != null)
+            {
+	            string asmFile = Path.Combine(assemblyPath, filename);
+
+	            return Assembly.LoadFrom(asmFile);
+            }
+
+            return null;
         }
     }
 }
