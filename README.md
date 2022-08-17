@@ -27,6 +27,7 @@
   - [mt.exe missing](#mtexe-missing)
   - [There was an error opening the file.](#there-was-an-error-opening-the-file)
   - [All my references are missing](#all-my-references-are-missing)
+  - [Welcome to dll hell](#welcome-to-dll-hell)
 
 ## Introduction
 
@@ -330,4 +331,22 @@ but this is fine:
 Try dotnet restore inside of the developer console to download any referenced nuget packages.
 For all the other references, there are different things that can lead to this:
 
-TODO
+1. Try to unload the project and reload with dependencies.
+2. Remove project and readd it to the solution.
+3. Remove this from the project file (make sure to get a backup from the file first)
+
+```csharp
+<Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+  <PropertyGroup>
+    <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+  </PropertyGroup>
+  <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+</Target>
+```
+
+This should allow to fix everything other than nuget packages. To restore those use this:
+`dotnet restore` inside of the developer shell.
+
+## Welcome to dll hell
+
+There are references to dll files which could lead to problems if another addin or even inventor itself is already using this in another version. This should be solved by using the `CurrentDomain_AssemblyResolve` method. The addin deploys everything to it's installfolder and those dll files should be loaded.
