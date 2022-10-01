@@ -191,7 +191,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
-    <Content Include="Installer\app.png" />
+    <Content Include="Installer\app.ico" />
     <Content Include="Installer\InstallerScript.iss" />
     <Content Include="Installer\License.txt" />
     <Content Include="Ressources\midlrtmd.dll" />
