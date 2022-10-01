@@ -232,9 +232,9 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
-    <PostBuildEvent>SET PATHTORUNIN=%25CD:bin\Debug=%25
+    <PostBuildEvent>SET PATHTORUNIN=%25CD:bin\$(ConfigurationName)=%25
 echo use manifest to sign dll
-"$(ProjectDir)Ressources\mt.exe" -manifest "%25PATHTORUNIN%25Addin\InventorTemplate.manifest" -outputresource:"%25PATHTORUNIN%25bin\Debug\InventorTemplate.dll";#2
+"$(ProjectDir)Ressources\mt.exe" -manifest "%25PATHTORUNIN%25Addin\InventorTemplate.manifest" -outputresource:"%25PATHTORUNIN%25$(OutDir)InventorTemplate.dll";#2
 
 echo Deleting the existing add-in folder.
 echo rmdir /q /s "C:\ProgramData\Autodesk\Inventor Addins\InventorTemplate.Inventor.addin" 
@@ -243,8 +243,7 @@ echo - Copy the .addin file folder into the standard Inventor Addins folder.
 XCopy "%25PATHTORUNIN%25Addin\InventorTemplate.Inventor.addin" "C:\ProgramData\Autodesk\Inventor Addins" /y
 
 echo Copy everything belonging to the addin file into the install folder
-XCopy "%25PATHTORUNIN%25bin\Debug\*" "InstallFolder" /y /r /i /s /f
-</PostBuildEvent>
+XCopy "%25PATHTORUNIN%25$(OutDir)*" "InstallFolder" /y /r /i /s /f</PostBuildEvent>
   </PropertyGroup>
   <Import Project="packages\Microsoft.Extensions.Logging.Abstractions.6.0.0\build\Microsoft.Extensions.Logging.Abstractions.targets" Condition="Exists('packages\Microsoft.Extensions.Logging.Abstractions.6.0.0\build\Microsoft.Extensions.Logging.Abstractions.targets')" />
 </Project>
