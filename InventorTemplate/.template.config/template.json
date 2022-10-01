@@ -31,7 +31,7 @@
       "datatype": "string",
       "defaultValue": "C:\\ProgramFiles\\InventorTemplate\\",
       "replaces": "InstallFolder",
-      "description": "Defines where the visual studio build folder is located. This is used by the installer script.",
+      "description": "Defines where the addin will be installed. This is used in the build post event.",
       "isRequired": true
     }
   }
