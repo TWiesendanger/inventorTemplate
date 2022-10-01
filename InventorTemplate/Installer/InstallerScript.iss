@@ -4,6 +4,7 @@
 #define MyAppURL "http://www.company.com"
 
 [Setup]
+ 
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{GUID}
@@ -18,12 +19,12 @@ DefaultDirName=C:\ProgramData\{#MyAppName}
 DisableDirPage=yes
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
-LicenseFile="SolutionFolder\Installer\License.txt"
+LicenseFile={#SourcePath}License.txt
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
-OutputDir="SolutionFolder\Installer"
+OutputDir={#SourcePath}
 OutputBaseFilename=InventorTemplate_{#MyAppVersion}
-SetupIconFile="SolutionFolder\Installer\app.png"
+SetupIconFile={#SourcePath}app.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -32,7 +33,7 @@ WizardStyle=modern
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "SolutionFolder\Addin\InventorTemplate.Inventor.addin"; DestDir: "C:\ProgramData\Autodesk\Inventor Addins";  Flags: ignoreversion
-Source: "SolutionFolder\bin\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\Addin\InventorTemplate.Inventor.addin"; DestDir: "C:\ProgramData\Autodesk\Inventor Addins";  Flags: ignoreversion
+Source: "..\bin\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
