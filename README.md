@@ -27,7 +27,6 @@
   - [mt.exe missing](#mtexe-missing)
   - [There was an error opening the file.](#there-was-an-error-opening-the-file)
   - [All my references are missing](#all-my-references-are-missing)
-  - [Welcome to dll hell](#welcome-to-dll-hell)
 
 ## Introduction
 
@@ -47,7 +46,7 @@ The following features are provided at the moment:
 - loading settings file
 - structured code base to extend
 - build script
-- inno setup installer script 
+- inno setup installer script
 - documentation for using and extending the addin
 
 ## Planned features
@@ -63,7 +62,7 @@ Feel free to ask for other features by emailing me tobias.wiesendanger@gmail.com
 
 ## Version
 
-The template is setup for Inventor 2023 but can be used for other versions. 
+The template is setup for Inventor 2023 but can be used for other versions.
 
 ### Version higher than 2023
 
@@ -106,7 +105,6 @@ You can test if the installation did work by typing:
 `dotnet new --list`
 
 ![image](https://user-images.githubusercontent.com/20424937/184010640-ba1aaf9c-40bb-4a2f-a87a-a626583e8847.png)
-
 
 ## create new from template
 
@@ -284,19 +282,23 @@ There is a file called `Globals.cs`, which can be used to get a reference to the
 ```csharp
 Globals.InvApp
 ```
+
 ## Add Settings
 
-There is one sample setting already provided and another one is used as the loggin path.
+For settings you should use applicationSettings. This allows to add typesafe settings and no dependecies / nuget packages are needed.
+In a earlier version microsoft.binding was used which lead to some problems.
 
-Look inside of the `appsettings.json`. There are currently two sections. One called Logging and one called AppSettings. To get a reference to those, use this:
+Just add a new setting here:
 
-```csharp
-var logSettings = config.GetSection("Logging").Get<AppsettingsBinder>();
-```
+![image](https://user-images.githubusercontent.com/20424937/194145539-669cf42b-661d-4cde-a863-74bdc1c72d6c.png)
 
-`AppsettingsBinder.cs` is used to allow a mapping to properties. If you create a new section inside of `appsettings.json` make sure to also create a new class inside of `AppsettingsBinder.cs`
+This allows to access them like this:
+`var logPath = Properties.Settings.Default.logPath;`
 
-For each new setting that you create make sure to add a property to the class. This will later allow to access them with intelisense.
+Keep in mind that depending on if the setting is a user setting or an application setting, they behave different.
+Application settings get their own section in app.config and cannot be changed while running. User settings can but are now overwritten by a special path depending on the user.
+
+Read more here: [Application settings](https://stackoverflow.com/questions/2101273/how-do-i-retrieve-applicationsettings-from-a-loaded-app-config-file/9704380#9704380)
 
 # Troubleshooting
 
@@ -346,7 +348,3 @@ For all the other references, there are different things that can lead to this:
 
 This should allow to fix everything other than nuget packages. To restore those use this:
 `dotnet restore` inside of the developer shell.
-
-## Welcome to dll hell
-
-There are references to dll files which could lead to problems if another addin or even inventor itself is already using this in another version. This should be solved by using the `CurrentDomain_AssemblyResolve` method. The addin deploys everything to it's installfolder and those dll files should be loaded.
