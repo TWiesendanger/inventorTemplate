@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -9,7 +7,6 @@ using System.Windows.Forms;
 using Inventor;
 using InventorTemplate.Helper;
 using InventorTemplate.UI;
-using Microsoft.Extensions.Configuration;
 using NLog;
 using NLog.Config;
 using Path = System.IO.Path;
@@ -65,17 +62,7 @@ namespace InventorTemplate
         /// <param name="firstTime">if set to <c>true</c> [first time].</param>
         public void Activate(ApplicationAddInSite addInSiteObject, bool firstTime)
         {
-	        AppDomain.CurrentDomain.AssemblyResolve +=
-		        CurrentDomain_AssemblyResolve;
-
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false);
-
-            IConfiguration config = builder.Build();
-
             LogManager.ThrowConfigExceptions = true;
-            var logSettings = config.GetSection("Logging").Get<AppsettingsBinder>();
             var basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             if (basePath != null)
                 LogManager.Configuration = new XmlLoggingConfiguration(Path.Combine(basePath, "nlog.config"));
@@ -84,8 +71,8 @@ namespace InventorTemplate
                 throw new ArgumentException(
                     $"nlog.config not found! Make sure there is a nlog config definition.");
             }
-
-            LogManager.Configuration.Variables["logPath"] = logSettings.LogPath;
+            var logPath = Properties.Settings.Default.logPath;
+            LogManager.Configuration.Variables["logPath"] = logPath;
             var logger = LogManager.GetCurrentClassLogger();
 
             try
@@ -290,31 +277,6 @@ namespace InventorTemplate
             }
 
             handlingCode = HandlingCodeEnum.kEventNotHandled;
-        }
-
-        private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
-        {
-            // Ignore missing resources
-            if (args.Name.Contains(".resources"))
-                return null;
-
-            // check for assemblies already loaded
-            Assembly assembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.FullName == args.Name);
-            if (assembly != null)
-                return assembly;
-            string filename = args.Name.Split(',')[0] + ".dll".ToLower();
-            string codeBase = Assembly.GetExecutingAssembly().CodeBase;
-            UriBuilder uri = new UriBuilder(codeBase);
-            string path = Uri.UnescapeDataString(uri.Path);
-            string assemblyPath = Path.GetDirectoryName(path);
-            if (assemblyPath != null)
-            {
-	            string asmFile = Path.Combine(assemblyPath, filename);
-
-	            return Assembly.LoadFrom(asmFile);
-            }
-
-            return null;
         }
     }
 }
