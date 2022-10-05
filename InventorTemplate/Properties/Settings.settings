@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="logPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\temp\InventorTemplate.log</Value>
+      <Value Profile="(Default)">C:\temp\</Value>
     </Setting>
   </Settings>
 </SettingsFile>
