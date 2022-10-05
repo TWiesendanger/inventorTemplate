@@ -5,7 +5,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Inventor;
-using InventorTemplate.Helper;
 using InventorTemplate.UI;
 using NLog;
 using NLog.Config;
@@ -18,7 +17,6 @@ namespace InventorTemplate
     public class StandardAddInServer : ApplicationAddInServer
     {
         private UserInterfaceEvents _uiEvents;
-        List<Ribbon> _ribbons = new List<Ribbon>();
         List<RibbonPanel> _ribbonPanels = new List<RibbonPanel>();
         List<RibbonTab> _ribbonTabs = new List<RibbonTab>();
         List<CommandControl> _buttons = new List<CommandControl>();
@@ -114,7 +112,6 @@ namespace InventorTemplate
 
             try
             {
-                _ribbons = new List<Ribbon>();
                 _uiEvents = null;
                 Marshal.ReleaseComObject(Globals.InvApp);
                 Globals.InvApp = null;
@@ -200,10 +197,6 @@ namespace InventorTemplate
             var iptRibbon = Globals.InvApp.UserInterfaceManager.Ribbons["Part"];
             var iamRibbon = Globals.InvApp.UserInterfaceManager.Ribbons["Assembly"];
             var ipnRibbon = Globals.InvApp.UserInterfaceManager.Ribbons["Presentation"];
-            _ribbons.Add(idwRibbon);
-            _ribbons.Add(iptRibbon);
-            _ribbons.Add(iamRibbon);
-            _ribbons.Add(ipnRibbon);
 
             var tabIdw = UiDefinitionHelper.SetupTab("InventorTemplate", "InventorTemplate", idwRibbon);
             var tabIpt = UiDefinitionHelper.SetupTab("InventorTemplate", "InventorTemplate", iptRibbon);
