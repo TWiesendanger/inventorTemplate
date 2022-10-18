@@ -96,7 +96,7 @@ It's best to create an addin based on the template and develop inside of that. I
 
 Clone this project to an empty folder. After that run the following command to install it:
 
-`dotnet new --install "C:\temp\inventorTemplate` in any terminal you like.
+`dotnet new --install "C:\temp\inventorTemplate"` in any terminal you like.
 I prefer to use the [windows terminal](https://apps.microsoft.com/store/detail/windows-terminal/9N0DX20HK701?hl=de-de&gl=DE).
 
 Make sure to replace the path with yours pointing to where the `.template.config` folder is.
