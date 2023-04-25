@@ -1,8 +1,8 @@
-# Inventor Template in C#
+# Inventor Template in Csharp
 
 ![InventorTemplate](https://user-images.githubusercontent.com/20424937/184002759-240fed33-e85f-407a-a262-a1f397967ea7.png)
 
-- [Inventor Template in C#](#inventor-template-in-c)
+- [Inventor Template in Csharp](#inventor-template-in-csharp)
   - [Introduction](#introduction)
   - [Planned features](#planned-features)
   - [Demo](#demo)
@@ -22,10 +22,11 @@
     - [Add to interface](#add-to-interface)
   - [Globals](#globals)
   - [Add Settings](#add-settings)
+  - [Loggin with Nlog](#loggin-with-nlog)
 - [Troubleshooting](#troubleshooting)
   - [dotnet new not available in terminal](#dotnet-new-not-available-in-terminal)
   - [mt.exe missing](#mtexe-missing)
-  - [There was an error opening the file.](#there-was-an-error-opening-the-file)
+  - [There was an error opening the file](#there-was-an-error-opening-the-file)
   - [All my references are missing](#all-my-references-are-missing)
 
 ## Introduction
@@ -161,6 +162,7 @@ Edit the sample script to your liking. At least the header needs some modificati
 ```
 
 Also make sure to change the license.txt file if you dont plan to release your addin with a GNU license.
+
 ## Build script
 
 If you open the properties of the project and look for the tab `Build Events` there is a script that is run each time build is used.
@@ -209,6 +211,7 @@ Follow the exact same principe:
 ```csharp
 _yourFieldName = UiDefinitionHelper.CreateButton("DisplayName", "InternalName", @"UI\ButtonResources\YourCommandName", theme);
 ```
+
 For InternalName it might be a goode idea to also add your addin name as a prefix to not risk any conflicting names. This has to be a unique name and also does not collide with already existing ones from autodesk inventor.
 Make sure to also add it to `_buttonDefinitions`. This makes sure that the button can be deleted when unloading the addin.
 
@@ -248,6 +251,7 @@ IF you want to create a new **tab** then do the following:
 ```csharp
 var yourTab = UiDefinitionHelper.SetupTab("DisplayName", "InternalName", onWhatRibbonToPlace); // use the alreay provided variables for onWhatRibbonToPlace
 ```
+
 This is a tab
 
 ![image](https://user-images.githubusercontent.com/20424937/184494993-e30c9f9a-089e-413e-8f95-22e33e231f39.png)
@@ -300,6 +304,15 @@ Application settings get their own section in app.config and cannot be changed w
 
 Read more here: [Application settings](https://stackoverflow.com/questions/2101273/how-do-i-retrieve-applicationsettings-from-a-loaded-app-config-file/9704380#9704380)
 
+## Loggin with Nlog
+
+Nlog is now correctly creating its own instance, so it no longer leads to any conflicts when using multiple addins. Use it like this:
+
+```csharp
+var logger = LogManagerAddin2.Instance.GetCurrentClassLogger();
+logger.Debug("TEST");
+```
+
 # Troubleshooting
 
 ## dotnet new not available in terminal
@@ -313,7 +326,7 @@ It's sufficient to install `SDK for Desktop C++ x86 Apps`. After this look here:
 
 There is now an `mt.exe` inside of the ressource folder that gets referenced by the build script. So this should no longer be a problem.
 
-## There was an error opening the file.
+## There was an error opening the file
 
 If your addin for some reason doesn't load, check what the Add-Ins Dialog shows.
 
