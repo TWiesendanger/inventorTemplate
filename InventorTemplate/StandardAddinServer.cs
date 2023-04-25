@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Inventor;
+using InventorTemplate.Helper;
 using InventorTemplate.UI;
 using NLog;
 using NLog.Config;
@@ -60,18 +61,7 @@ namespace InventorTemplate
         /// <param name="firstTime">if set to <c>true</c> [first time].</param>
         public void Activate(ApplicationAddInSite addInSiteObject, bool firstTime)
         {
-            LogManager.ThrowConfigExceptions = true;
-            var basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            if (basePath != null)
-                LogManager.Configuration = new XmlLoggingConfiguration(Path.Combine(basePath, "nlog.config"));
-            else
-            {
-                throw new ArgumentException(
-                    $"nlog.config not found! Make sure there is a nlog config definition.");
-            }
-            var logPath = Properties.Settings.Default.logPath;
-            LogManager.Configuration.Variables["logPath"] = logPath;
-            var logger = LogManager.GetCurrentClassLogger();
+            var logger = LogManagerAddin.Instance.GetCurrentClassLogger();
 
             try
             {
@@ -86,7 +76,7 @@ namespace InventorTemplate
 
                 var themeManager = Globals.InvApp.ThemeManager;
                 Globals.ActiveTheme = themeManager.ActiveTheme;
-                string theme = Globals.ActiveTheme.Name;
+                var theme = Globals.ActiveTheme.Name;
                 logger.Debug("Inventor ThemeManager ActiveTheme: " + theme);
 
                 _info = UiDefinitionHelper.CreateButton("Info", "InventorTemplateInfo", @"UI\ButtonResources\Info", theme);
