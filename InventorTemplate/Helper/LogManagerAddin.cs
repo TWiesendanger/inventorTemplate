@@ -21,8 +21,6 @@ namespace InventorTemplate.Helper
 
                 var logFactory = new LogFactory();
                 logFactory.Configuration = new XmlLoggingConfiguration(configFilePath, logFactory);
-                var logPath = Properties.Settings.Default.logPath;
-                logFactory.Configuration.Variables["logPath"] = logPath;
                 logFactory.ThrowExceptions = true;
                 return logFactory;
             }
